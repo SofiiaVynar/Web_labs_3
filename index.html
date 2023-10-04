@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Парфуми</title>
+    <link href="https://fonts.googleapis.com/css2?family=Muli:wght@400;500;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="perfume.css">
+</head>
+
+<body>
+    <h1 class="list">Список Парфумів</h1>
+    <div id="app">
+        <div>
+            <label for="search">Пошук:</label>
+            <input type="text" id="search" placeholder="Введіть назву виробника">
+        </div>
+        <div>
+            <label for="sort">Сортувати за:</label>
+            <select id="sort">
+                <option value="price">Ціною</option>
+                <option value="volume">Об'ємом</option>
+            </select>
+        </div>
+        <div>
+            <p>Загальна кількість парфумів: <span id="totalPerfumes">0</span></p>
+        </div>
+        <ul id="perfumeList">
+        </ul>
+    </div>
+    <script src="perfume.js"></script>
+</body>
+
+</html>
