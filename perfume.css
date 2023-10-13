@@ -91,3 +91,20 @@ p{
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-style: italic;
 }
+
+.edit-button, .delete-button {
+    font-size: 16px;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 20px 0 40px 0;
+    background-color: transparent;
+    cursor: pointer;
+    width: 200px;
+}
+
+.edit-button:hover, .delete-button:hover {
+    background-color: #ffffff;
+    color: #000000;
+}

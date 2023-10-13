@@ -7,6 +7,7 @@
     <title>Парфуми</title>
     <link href="https://fonts.googleapis.com/css2?family=Muli:wght@400;500;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="perfume.css">
+    <link rel="stylesheet" href="modal.css">
 </head>
 
 <body>
@@ -28,7 +29,54 @@
         </div>
         <ul id="perfumeList">
         </ul>
-    </div>
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-edit-modal">&times;</span>
+                <h2>Редагувати парфум</h2>
+                <form id="edit-form">
+                    <label for="edit-perfumeName">Назва парфуму:</label>
+                    <input type="text" id="edit-perfumeName" required>
+        
+                    <label for="edit-manufacturer">Виробник:</label>
+                    <input type="text" id="edit-manufacturer" required>
+        
+                    <label for="edit-price">Ціна:</label>
+                    <input type="number" id="edit-price" required>
+        
+                    <label for="edit-volume">Об'єм:</label>
+                    <input type="number" id="edit-volume" required>
+        
+                    <button type="submit">Зберегти</button>
+                </form>
+            </div>
+        </div>        
+        <div class="plus-icon-container">
+            <li class="plus-icon">+</li>
+        </div>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-modal">&times;</span>
+                <h2>Додайте парфуми</h2>
+                <form id="perfume-form">
+                    <label for="perfumeName">Назва парфуму:</label>
+                    <input type="text" id="perfumeName" required>
+        
+                    <label for="manufacturer">Виробник:</label>
+                    <input type="text" id="manufacturer" required>
+        
+                    <label for="price">Ціна:</label>
+                    <input type="number" id="price" required>
+        
+                    <label for="volume">Об'єм:</label>
+                    <input type="number" id="volume" required>
+        
+                    <label for="perfumeImage">Зображення парфуму:</label>
+                    <input type="file" id="perfumeImage" accept="image/*" required>
+        
+                    <button type="submit">Додати парфум</button>
+                </form>
+            </div>
+        </div>   
     <script src="perfume.js"></script>
 </body>
 
