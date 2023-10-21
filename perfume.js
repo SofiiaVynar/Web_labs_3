@@ -3,7 +3,7 @@ class Perfume {
         this.volume = volume;
         this.price = price;
         this.manufacturer = manufacturer;
-        this.imageName = imageName
+        this.imageName = imageName;
         this.perfumeName = perfumeName;
     }
 }
@@ -22,6 +22,44 @@ const perfumeList = document.getElementById("perfumeList");
 const searchInput = document.getElementById("search");
 const sortSelect = document.getElementById("sort");
 const totalPerfumesSpan = document.getElementById("totalPerfumes");
+const plusIcon = document.querySelector(".plus-icon");
+const modal = document.getElementById("modal");
+const closeModal = document.getElementById("close-modal");
+const perfumeForm = document.getElementById("perfume-form");
+const perfumeImageInput = document.getElementById("perfumeImage");
+
+
+perfumeForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const perfumeName = document.getElementById("perfumeName").value;
+    const manufacturer = document.getElementById("manufacturer").value;
+    const price = parseFloat(document.getElementById("price").value);
+    const volume = parseFloat(document.getElementById("volume").value);
+    const perfumeImage = document.getElementById("perfumeImage").files[0];
+    const imageName = perfumeImage.name.split('.')[0];
+    const newPerfume = new Perfume(volume, price, manufacturer, imageName, perfumeName);
+    perfumes.push(newPerfume);
+    displayPerfumes(newPerfume);
+    modal.style.display = "none";
+});
+
+
+plusIcon.addEventListener("click", () => {
+    modal.style.display = "block";
+});
+
+closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+let perfumeImages = {};
 
 function displayPerfumes() {
     perfumeList.innerHTML = "";
@@ -54,18 +92,70 @@ function displayPerfumes() {
         const volumeText = document.createElement("div");
         volumeText.innerHTML = `<em>Об'єм:</em> ${perfume.volume}мл`;
         volumeText.classList.add("volume");
-        li.appendChild(volumeText); 
+        li.appendChild(volumeText);
 
+        const editButton = document.createElement("button");
+        editButton.className = "edit-button";
+        editButton.textContent = "Edit";
+        editButton.addEventListener("click", () => {
+            openEditModal(perfume);
+        });
+        li.appendChild(editButton);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-button";
+        deleteButton.textContent = "Delete";
+        li.appendChild(deleteButton);
 
         perfumeList.appendChild(li);
 
         totalPerfumes++;
     });
-
     totalPerfumesSpan.textContent = totalPerfumes;
 }
 
 searchInput.addEventListener("input", displayPerfumes);
 sortSelect.addEventListener("change", displayPerfumes);
 
-displayPerfumes(); 
+displayPerfumes();
+
+function openEditModal(perfume) {
+    const editModal = document.getElementById("editModal");
+    const editForm = document.getElementById("edit-form");
+    const editPerfumeName = document.getElementById("edit-perfumeName");
+    const editManufacturer = document.getElementById("edit-manufacturer");
+    const editPrice = document.getElementById("edit-price");
+    const editVolume = document.getElementById("edit-volume");
+    const closeEditModal = document.getElementById("close-edit-modal");
+
+    editPerfumeName.value = perfume.perfumeName;
+    editManufacturer.value = perfume.manufacturer;
+    editPrice.value = perfume.price;
+    editVolume.value = perfume.volume;
+
+    editModal.style.display = "block";
+
+    closeEditModal.addEventListener("click", () => {
+        const editModal = document.getElementById("editModal");
+        editModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        const editModal = document.getElementById("editModal");
+        if (event.target === editModal) {
+            editModal.style.display = "none";
+        }
+    });
+    editForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        perfume.perfumeName = editPerfumeName.value;
+        perfume.manufacturer = editManufacturer.value;
+        perfume.price = parseFloat(editPrice.value);
+        perfume.volume = parseFloat(editVolume.value);
+
+        displayPerfumes();
+        editModal.style.display = "none";
+    });
+
+}
