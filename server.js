@@ -62,7 +62,7 @@ app.put('/perfumes/:id', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Помилка при обновлені парфюма:', error);
+            console.error('Помилка при оновленні парфюма:', error);
             res.status(500).send('Помилка на сервері');
         } else {
             res.json(updatedData);
