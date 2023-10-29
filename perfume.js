@@ -28,7 +28,6 @@ const closeModal = document.getElementById("close-modal");
 const perfumeForm = document.getElementById("perfume-form");
 const perfumeImageInput = document.getElementById("perfumeImage");
 
-
 perfumeForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -38,11 +37,35 @@ perfumeForm.addEventListener("submit", function (event) {
     const volume = parseFloat(document.getElementById("volume").value);
     const perfumeImage = document.getElementById("perfumeImage").files[0];
     const imageName = perfumeImage.name.split('.')[0];
-    const newPerfume = new Perfume(volume, price, manufacturer, imageName, perfumeName);
-    perfumes.push(newPerfume);
-    displayPerfumes(newPerfume);
+    const newPerfume = {
+        perfumeName,
+        manufacturer,
+        price,
+        volume,
+        imageName
+    };
+
+    fetch('http://localhost:3000/perfumes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPerfume),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Новий парфум доданий:', data);
+            perfumes.push(data);
+            displayPerfumes();
+        })
+        .catch(error => {
+            console.error('Помилка при створенні нового парфуму:', error);
+        });
+
     modal.style.display = "none";
 });
+
+
 
 
 plusIcon.addEventListener("click", () => {
@@ -58,7 +81,6 @@ window.addEventListener("click", (event) => {
         modal.style.display = "none";
     }
 });
-
 let perfumeImages = {};
 
 function displayPerfumes() {
@@ -100,11 +122,15 @@ function displayPerfumes() {
         editButton.addEventListener("click", () => {
             openEditModal(perfume);
         });
+
         li.appendChild(editButton);
 
         const deleteButton = document.createElement("button");
         deleteButton.className = "delete-button";
         deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => {
+            deletePerfume(perfume);
+        });
         li.appendChild(deleteButton);
 
         perfumeList.appendChild(li);
@@ -146,16 +172,147 @@ function openEditModal(perfume) {
             editModal.style.display = "none";
         }
     });
+
     editForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        perfume.perfumeName = editPerfumeName.value;
-        perfume.manufacturer = editManufacturer.value;
-        perfume.price = parseFloat(editPrice.value);
-        perfume.volume = parseFloat(editVolume.value);
+        const updatedPerfume = {
+            perfumeName: editPerfumeName.value,
+            manufacturer: editManufacturer.value,
+            price: parseFloat(editPrice.value),
+            volume: parseFloat(editVolume.value),
+            imageName: perfume.imageName
+        };
 
-        displayPerfumes();
+        fetch(`http://localhost:3000/perfumes/${perfume.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedPerfume),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Парфум відредаговано:', data);
+
+                const updatedIndex = perfumes.findIndex(item => item.id === perfume.id);
+                if (updatedIndex !== -1) {
+                    perfumes[updatedIndex] = data;
+                }
+
+                displayPerfumes();
+            })
+            .catch(error => {
+                console.error('Помилка при редагуванні парфуму:', error);
+            });
+
         editModal.style.display = "none";
     });
-
 }
+
+
+
+async function loadPerfumes() {
+    try {
+        const response = await fetch('http://localhost:3000/perfumes');
+        const data = await response.json();
+        perfumes.length = 0;
+        perfumes.push(...data);
+        displayPerfumes();
+    } catch (error) {
+        console.error('Помилка при завантаженні парфумів:', error);
+    }
+}
+function deletePerfume(perfume) {
+    const confirmed = confirm(`Ви впевнені, що бажаєте видалити парфум "${perfume.perfumeName}"?`);
+    if (confirmed) {
+        fetch(`http://localhost:3000/perfumes/${perfume.id}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.status === 204) {
+                    const index = perfumes.findIndex(item => item.id === perfume.id);
+                    if (index !== -1) {
+                        perfumes.splice(index, 1);
+                        displayPerfumes();
+                    }
+                } else {
+                    console.error('Помилка при видаленні парфуму');
+                }
+            })
+            .catch(error => {
+                console.error('Помилка при видаленні парфуму:', error);
+            });
+    }
+}
+
+
+
+loadPerfumes();
+
+
+app.post('/perfumes', (req, res) => {
+    const newPerfume = req.body;
+    const query = 'INSERT INTO perfume (volume, price, manufacturer, imageName, perfumeName) VALUES (?, ?, ?, ?, ?)';
+    const values = [newPerfume.volume, newPerfume.price, newPerfume.manufacturer, newPerfume.imageName, newPerfume.perfumeName];
+
+    connection.query(query, values, (error, result) => {
+        if (error) {
+            console.error('Error adding perfume:', error);
+            res.status(500).send('Server error');
+        } else {
+            newPerfume.id = result.insertId;
+            res.status(201).json(newPerfume);
+        }
+    });
+});
+
+
+
+app.get('/perfumes', (req, res) => {
+    const query = 'SELECT * FROM perfumes';
+    connection.query(query, (error, results) => {
+        if (error) {
+            console.error('Помилка при запиті до бази даних:', error);
+            res.status(500).send('Помилка сервера');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+app.put('/perfumes/:id', (req, res) => {
+    const perfumeId = req.params.id;
+    const updatedData = req.body;
+    const query = 'UPDATE perfumes SET volume = ?, price = ?, manufacturer = ?, imageName = ?, perfumeName = ? WHERE id = ?';
+    const values = [updatedData.volume, updatedData.price, updatedData.manufacturer, updatedData.imageName, updatedData.perfumeName, perfumeId];
+
+    connection.query(query, values, (error, result) => {
+        if (error) {
+            console.error('Error updating perfume:', error);
+            res.status(500).send('Server error');
+        } else {
+            res.json(updatedData);
+        }
+    });
+});
+
+
+app.delete('/perfumes/:id', (req, res) => {
+    const perfumeId = req.params.id;
+
+    const query = 'DELETE FROM perfumes WHERE id = ?';
+    const values = [perfumeId];
+
+    connection.query(query, values, (error, result) => {
+        if (error) {
+            console.error('Error deleting perfume:', error);
+            res.status(500).send('Server error');
+        } else {
+            res.sendStatus(204);
+        }
+    });
+});
+
+
