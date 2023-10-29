@@ -39,7 +39,7 @@ app.get('/perfumes', (req, res) => {
 app.post('/perfumes', (req, res) => {
     const newPerfume = req.body;
     const query = 'INSERT INTO perfumes (volume, price, manufacturer, imageName, perfumeName) VALUES (?, ?, ?, ?, ?)';
-    const values = [newPerfume.volume, newPerfume.price, newPerfume.manufacturer, newPerfume.imageName, newPerfume.perfumeName]; // Додайте imageName
+    const values = [newPerfume.volume, newPerfume.price, newPerfume.manufacturer, newPerfume.imageName, newPerfume.perfumeName]; 
 
     connection.query(query, values, (error, result) => {
         if (error) {
@@ -55,7 +55,7 @@ app.post('/perfumes', (req, res) => {
 
 app.put('/perfumes/:id', (req, res) => {
     const perfumeId = req.params.id;
-    const updatedData = req.body; // Новые данные для обновления
+    const updatedData = req.body;
 
     const query = 'UPDATE perfumes SET volume = ?, price = ?, manufacturer = ?, imageName = ?, perfumeName = ? WHERE id = ?';
     const values = [updatedData.volume, updatedData.price, updatedData.manufacturer, updatedData.imageName, updatedData.perfumeName, perfumeId];

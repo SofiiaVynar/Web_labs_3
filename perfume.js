@@ -258,8 +258,8 @@ app.post('/perfumes', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Error adding perfume:', error);
-            res.status(500).send('Server error');
+            console.error('Помилка додавання парфуму:', error);
+            res.status(500).send('Помилка серверу');
         } else {
             newPerfume.id = result.insertId;
             res.status(201).json(newPerfume);
@@ -290,8 +290,8 @@ app.put('/perfumes/:id', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Error updating perfume:', error);
-            res.status(500).send('Server error');
+            console.error('Помилка оновлення парфуму:', error);
+            res.status(500).send('Помилка серверу');
         } else {
             res.json(updatedData);
         }
@@ -307,8 +307,8 @@ app.delete('/perfumes/:id', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Error deleting perfume:', error);
-            res.status(500).send('Server error');
+            console.error('Помилка видалення парфуму:', error);
+            res.status(500).send('Помилка серверу');
         } else {
             res.sendStatus(204);
         }
