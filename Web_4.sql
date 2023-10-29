@@ -1,10 +1,8 @@
--- Створіть базу даних, якщо вона ще не існує
+
 CREATE DATABASE IF NOT EXISTS perfume;
 
--- Використовуйте новостворену базу даних
 USE perfume;
 
--- Створіть таблицю "perfumes"
 CREATE TABLE IF NOT EXISTS perfumes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     volume INT,
