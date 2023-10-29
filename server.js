@@ -9,7 +9,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Подключение к базе данных
 const connection = mysql.createConnection({
     host: dbConfig.HOST,
     user: dbConfig.USER,
@@ -19,26 +18,24 @@ const connection = mysql.createConnection({
 
 connection.connect((error) => {
     if (error) {
-        console.error('Ошибка подключения к базе данных:', error);
+        console.error('Помилка підключення до бази даних:', error);
         return;
     }
-    console.log('Подключение к базе данных прошло успешно');
+    console.log('Підключення до бази даних прошло успішно');
 });
 
-// Обработка запроса на получение списка парфюмов
 app.get('/perfumes', (req, res) => {
     const query = 'SELECT * FROM perfumes';
     connection.query(query, (error, results) => {
         if (error) {
-            console.error('Ошибка при запросе к базе данных:', error);
-            res.status(500).send('Ошибка на сервере');
+            console.error('Помилка при запиті до бази даних:', error);
+            res.status(500).send('Помилка на сервері');
         } else {
             res.json(results);
         }
     });
 });
 
-// Обработка запроса на добавление нового парфюма
 app.post('/perfumes', (req, res) => {
     const newPerfume = req.body;
     const query = 'INSERT INTO perfumes (volume, price, manufacturer, imageName, perfumeName) VALUES (?, ?, ?, ?, ?)';
@@ -46,8 +43,8 @@ app.post('/perfumes', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Ошибка при добавлении парфюма:', error);
-            res.status(500).send('Ошибка на сервере');
+            console.error('Помилка при додаванні парфюма:', error);
+            res.status(500).send('Помилка на сервері');
         } else {
             newPerfume.id = result.insertId;
             res.status(201).json(newPerfume);
@@ -56,7 +53,6 @@ app.post('/perfumes', (req, res) => {
 });
 
 
-// Обработка запроса на обновление элемента
 app.put('/perfumes/:id', (req, res) => {
     const perfumeId = req.params.id;
     const updatedData = req.body; // Новые данные для обновления
@@ -66,8 +62,8 @@ app.put('/perfumes/:id', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Ошибка при обновлении парфюма:', error);
-            res.status(500).send('Ошибка на сервере');
+            console.error('Помилка при обновлені парфюма:', error);
+            res.status(500).send('Помилка на сервері');
         } else {
             res.json(updatedData);
         }
@@ -82,8 +78,8 @@ app.delete('/perfumes/:id', (req, res) => {
 
     connection.query(query, values, (error, result) => {
         if (error) {
-            console.error('Ошибка при удалении парфюма:', error);
-            res.status(500).send('Ошибка на сервере');
+            console.error('Помилка при видаленні парфюма:', error);
+            res.status(500).send('Помилка на сервері');
         } else {
             res.sendStatus(204);
         }
@@ -91,7 +87,7 @@ app.delete('/perfumes/:id', (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('Сервер запущен на порту 3000');
+    console.log('Сервер запущений на порті 3000');
 });
 
 
